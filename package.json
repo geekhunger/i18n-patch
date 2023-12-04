@@ -1,0 +1,23 @@
+{
+	"private": false,
+	"name": "i18n-patch",
+	"version": "1.0.0",
+	"description": "Manage multilingual messages",
+	"main": "translate.js",
+	"scripts": {},
+	"keywords": [
+		"expressjs",
+		"render",
+		"renderer",
+		"middleware",
+		"response",
+		"translation",
+		"i18n",
+		"placeholder"
+	],
+	"author": "geekhunger",
+	"license": "MIT",
+	"dependencies": {
+		"type-approve": "^3.1.1"
+	}
+}
