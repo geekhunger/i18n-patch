@@ -25,7 +25,7 @@ export const patch = function(text, ...substitutions) { // Substitute text place
 
 
 export const translate = function(locale, identifier, ...substitutions) {
-    const translation = typeof identifier === "string" && DICTIONARY.hasOwnProperty(identifier)
+    const translation = type({string: identifier}) && DICTIONARY.hasOwnProperty(identifier)
         ? DICTIONARY[identifier]
         : DICTIONARY.missing_translation
     
