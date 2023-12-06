@@ -18,7 +18,7 @@ export const has = function(locale, identifier) { // check if dictionary contain
     )
 }
 
-export const add = function(locale, identifier, text) {
+export const add = function(locale, identifier, text, override = false) {
     assert(type({object: DICTIONARY}), "Missing a dictionary object!")
     if(type({nils: [identifier, text], object: locale})) {
         for(let [name, translations] of Object.entries(translations)) {
@@ -27,7 +27,7 @@ export const add = function(locale, identifier, text) {
             }
         }
     } else {
-        assert(!has(locale, identifier), `Translation with identifier '${identifier}' and locale '${locale}' already exists!`)
+        assert(override === true || !has(locale, identifier), `Translation with identifier '${identifier}' and locale '${locale}' already exists!`)
         assert(type({string: text}), `Can't extend dictionary for identifier '${identifier}' on locale '${locale}' with text '${text}' because of malformed values!`)
         DICTIONARY[identifier][locale] = text // save new entry
     }
