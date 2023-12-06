@@ -4,9 +4,9 @@
     For more information, inspect the `./translations.json` file.
 */
 
-import {assert, type, validate} from "type-approve"
+import {assert, type} from "type-approve"
 
-export let DICTIONARY = {}
+export const DICTIONARY = {}
 
 export const has = function(locale, identifier) { // check if dictionary contains a translation for given identifier and locale
     assert(type({object: DICTIONARY}), "Missing a dictionary object!")
@@ -29,7 +29,7 @@ export const add = function(locale, identifier, text) {
     } else {
         assert(!has(locale, identifier), `Translation with identifier '${identifier}' and locale '${locale}' already exists!`)
         assert(type({string: text}), `Can't extend dictionary for identifier '${identifier}' on locale '${locale}' with text '${text}' because of malformed values!`)
-        DICTIONARY[identifier][locale] = text // save entry
+        DICTIONARY[identifier][locale] = text // save new entry
     }
 }
 
