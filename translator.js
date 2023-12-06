@@ -1,6 +1,30 @@
 import {assert, type} from "type-approve"
-import {DICTIONARY} from "./dictionary.js"
+import {DICTIONARY, add} from "./dictionary.js"
 
+try {
+    add({
+        missing_translation: {
+            en: "<Error: Missing english translation>",
+            de: "<Fehler: Keine deutsche Übersetzung>",
+            ru: "<Ошибка: Русский перевод не найден>"
+        }
+    })
+    add({
+        missing_locale: {
+            en: "<Error: Language with code '$1' is not found>",
+            de: "<Fehler: Die Sprache mit dem Code '$1' wurde nicht gefunden>",
+            ru: "<Ошибка: Язык с кодом '$1' не найден>"
+        }
+    })
+    add({
+        missing_placeholder: {
+            en: "<Error: Missing placeholder '$1'>",
+            de: "<Fehler: Platzhalter '$1' fehlt>",
+            ru: "<Ошибка: Заполнитель '$1' отсутсвует>"
+        }
+    })
+} catch(_) {
+}
 
 export const strip = function(value) { // string trimming that works well with urls
     assert(type({string: value}), "Can't trim a non-string value!")
