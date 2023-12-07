@@ -129,13 +129,14 @@ export const Polyglot = class {
 
     patch(text, ...substitutions) { // substitute text placeholders with actual values
         assert(
-            type({string: text, array: substitutions}),
-            "Missing placeholder or substitution values!"
+            check({string: text}),
+            `Invalid value ${JSON.stringify(text)} for substitution!`
         )
         const searchquery = /(\$(\d+))/g
         const placeholders = text.match(searchquery) || []
         assert(
-            placeholders.length !== substitutions.length,
+            placeholders.length < 1 ||
+            placeholders.length === substitutions.length,
             `Missmatch between placeholders (${placeholders.length}) and substitutions (${substitutions.length})!`
         )
         return text.replace(searchquery, (match, placeholder, id) => substitutions[id - 1] || placeholder) // replace values or keep existing placeholder identifiers
