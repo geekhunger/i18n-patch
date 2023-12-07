@@ -153,16 +153,16 @@ export const Polyglot = class {
             "Missing dictionary object!"
         )
         assert(
-            check({language_alpha2: locale}),
+            check({language_alpha2: language}),
             `Invalid language code '${language}'!`
         )
         const translation = type({translation_id: identifier}) && this.#dictionary.hasOwnProperty(identifier)
             ? this.#dictionary[identifier]
             : this.#dictionary["Missing Translation Error"]
-        const text = translation.hasOwnProperty(locale) && type({string: translation[locale]})
-            ? translation[locale]
-            : patch(translation.en, locale)
-        return patch(text, ...substitutions)
+        const text = translation.hasOwnProperty(language) && type({string: translation[language]})
+            ? translation[language]
+            : this.patch(translation[this.PREFERRED_LANGUAGE], language)
+        return this.patch(text, ...substitutions)
     }
 
     constructor() {
