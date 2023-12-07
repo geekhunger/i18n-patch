@@ -146,7 +146,7 @@ export const Polyglot = class {
         */
     }
 
-    translate(locale, identifier, ...substitutions) {
+    put(language, identifier, ...substitutions) {
         assert(
             check({object: this.#dictionary}),
             "Missing dictionary object!"
