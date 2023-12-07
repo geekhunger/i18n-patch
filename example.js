@@ -1,5 +1,5 @@
-import Dictionary from "./polyglot.js"
-const dict = new Dictionary()
+import {Polyglot} from "./polyglot.js"
+const dict = new Polyglot()
 
 console.log(dict.DICTIONARY, dict.PREFERRED_LANGUAGE)
 
@@ -27,7 +27,7 @@ dict.DICTIONARY = {
     }
 }
 
-dict.add("en", "second translation", "foooooobarBAZ", true)
+dict.add("second translation", "foooooobarBAZ", "en", true)
 
 console.log(dict.DICTIONARY, dict.PREFERRED_LANGUAGE)
 
@@ -36,3 +36,7 @@ dict.PREFERRED_LANGUAGE = "ru" // try changing this to "fr"
 console.log(dict.FULLY_SUPPORTED_LANGUAGES, dict.PARTLY_SUPPORTED_LANGUAGES, dict.PREFERRED_LANGUAGE)
 
 console.log(dict.INCOMPLETE_TRANSLATIONS)
+
+console.log(dict.put("first translation", dict.PREFERRED_LANGUAGE))
+
+console.log(dict.patch("This $0001.1 a test!", "is not"))

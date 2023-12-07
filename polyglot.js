@@ -9,6 +9,14 @@ import {assert, type as check, add as type, validate} from "type-approve"
 type("language_alpha2", "languages_alpha2", value => /^[a-z]{2,2}$/.test(value))
 type("translation_id", value => /\w{3,}/i.test(value))
 
+const findMissingNumbers = function(list) {
+    if(!check({array: list}) || list.length < 1) return []
+    const min = Math.min(...list)
+    const max = Math.max(...list)
+    const all = Array.from(Array(max - min + 1), (e, i) => i + min)
+    return all.filter(e => !list.includes(e))
+}
+
 export const Polyglot = class {
     #dictionary = {}
     #preferred_language = undefined
@@ -82,7 +90,7 @@ export const Polyglot = class {
         return value
     }
 
-    has(language, identifier) {
+    has(identifier, language) {
         assert(check({object: this.#dictionary}), "Missing dictionary object!")
         assert(check({language_alpha2: language}), `Invalid language code '${language}'!`)
         assert(check({translation_id: identifier}), `Invalid translation identifier '${identifier}'!`)
@@ -93,24 +101,24 @@ export const Polyglot = class {
         )
     }
 
-    add(language, identifier, translation, override = false) {
-        if(check({nils: [identifier, translation], object: language})) {
-            for(let [new_identifier, new_dictionary] of Object.entries(language)) {
+    add(identifier, translation, language, override = false) {
+        if(check({nils: [translation, language], object: identifier})) {
+            for(let [new_identifier, new_dictionary] of Object.entries(identifier)) {
                 for(let [new_language, new_translation] of Object.entries(new_dictionary)) {
-                    this.add(new_language, new_identifier, new_translation, override) // NOTE: This recursive call will check for existing entries too.
+                    this.add(new_identifier, new_translation, new_language, override) // NOTE: This recursive call will check for existing entries too.
                 }
             }
         } else {
             assert(
                 override === true ||
-                !this.has(language, identifier),
+                !this.has(identifier, language),
                 `Conflicting translation with identifier '${identifier}' and language '${language}'!`
             )
             assert(
                 check({string: translation}),
                 `Malformed translation value ${JSON.stringify(translation)}!`
             )
-            if(this.has(language, identifier) && !this.FULLY_SUPPORTED_LANGUAGES.includes(language)) { // reuse some assert checks of has()
+            if(this.has(identifier, language) && !this.FULLY_SUPPORTED_LANGUAGES.includes(language)) { // reuse some assert checks of has()
                 assert(Object.values(this.#dictionary).every(translations => Object.keys(translations).includes(language)), [
                     "Explicit override of",
                     JSON.stringify({[identifier]: {[language]: this.#dictionary[identifier][language]}}),
@@ -129,15 +137,17 @@ export const Polyglot = class {
 
     patch(text, ...substitutions) { // substitute text placeholders with actual values
         assert(
-            check({string: text}),
+            check({string: text, array: substitutions}),
             `Invalid value ${JSON.stringify(text)} for substitution!`
         )
         const searchquery = /(\$(\d+))/g
-        const placeholders = text.match(searchquery) || []
+        const placeholders = [...new Set(text.match(searchquery))].sort()
         assert(
             placeholders.length < 1 ||
-            placeholders.length === substitutions.length,
-            `Missmatch between placeholders (${placeholders.length}) and substitutions (${substitutions.length})!`
+            placeholders.length === substitutions.length &&
+            parseInt(placeholders[0].slice(1)) > 0,
+            // TODO add check if placeholder numbering has skipped id labels
+            `Missmatch between placeholders (${JSON.stringify(placeholders)}) and substitutions (${JSON.stringify(substitutions)})! Placeholder IDs must start with '$1' and the numbering must be continuous.`
         )
         return text.replace(searchquery, (match, placeholder, id) => substitutions[id - 1] || placeholder) // replace values or keep existing placeholder identifiers
         /*
@@ -147,7 +157,7 @@ export const Polyglot = class {
         */
     }
 
-    put(language, identifier, ...substitutions) {
+    put(identifier, language, ...substitutions) {
         assert(
             check({object: this.#dictionary}),
             "Missing dictionary object!"
@@ -156,12 +166,13 @@ export const Polyglot = class {
             check({language_alpha2: language}),
             `Invalid language code '${language}'!`
         )
+    
         const translation = type({translation_id: identifier}) && this.#dictionary.hasOwnProperty(identifier)
             ? this.#dictionary[identifier]
             : this.#dictionary["Missing Translation Error"]
         const text = translation.hasOwnProperty(language) && type({string: translation[language]})
             ? translation[language]
-            : this.patch(translation[this.PREFERRED_LANGUAGE], language)
+            : this.patch(translation[this.PREFERRED_LANGUAGE], language) // will be plain-text without placeholders after this compilation, therefor substitutions in return statement will have no effect
         return this.patch(text, ...substitutions)
     }
 
