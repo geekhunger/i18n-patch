@@ -176,4 +176,4 @@ export const Polyglot = class {
     }
 }
 
-export default Polyglot
+export default new Polyglot()
