@@ -21,7 +21,7 @@ export const Polyglot = class {
         return this.add(value)
     }
 
-    #getIncompleteTranslations(languages) { // get an object of identifiers with a list of missing languages
+    #findIncompleteTranslations(languages) { // get an object of identifiers with a list of missing languages
         assert(
             check({array: languages}) &&
             languages.every(validate("language_alpha2")),
@@ -44,7 +44,7 @@ export const Polyglot = class {
     }
 
     get INCOMPLETE_TRANSLATIONS() { // read-only
-        return this.#getIncompleteTranslations(this.AVAILABLE_LANGUAGES)
+        return this.#findIncompleteTranslations(this.AVAILABLE_LANGUAGES)
     }
 
     get AVAILABLE_LANGUAGES() { // read-only
@@ -77,7 +77,7 @@ export const Polyglot = class {
 
     set PREFERRED_LANGUAGE(value) {
         assert(check({language_alpha2: value}), `Invalid language code '${value}'!`)
-        assert(check(this.FULLY_SUPPORTED_LANGUAGES.includes(value)), `Missing translations for '${value}' on existing entries ${JSON.stringify(this.#getIncompleteTranslations([value]))}!`)
+        assert(check(this.FULLY_SUPPORTED_LANGUAGES.includes(value)), `Missing translations for '${value}' on existing entries ${JSON.stringify(this.#findIncompleteTranslations([value]))}!`)
         this.#preferred_language = value
         return value
     }
@@ -115,7 +115,7 @@ export const Polyglot = class {
                     "Explicit override of",
                     JSON.stringify({[identifier]: {[language]: this.#dictionary[identifier][language]}}),
                     `reports other missing translations for '${language}' on existing entries`,
-                    JSON.stringify(this.#getIncompleteTranslations([language])),
+                    JSON.stringify(this.#findIncompleteTranslations([language])),
                     "!"
                 ].join(" "))
             }
