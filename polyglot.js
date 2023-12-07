@@ -166,7 +166,6 @@ export const Polyglot = class {
             check({language_alpha2: language}),
             `Invalid language code '${language}'!`
         )
-    
         const translation = type({translation_id: identifier}) && this.#dictionary.hasOwnProperty(identifier)
             ? this.#dictionary[identifier]
             : this.#dictionary["Missing Translation Error"]
