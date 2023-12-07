@@ -105,7 +105,7 @@ export const Polyglot = class {
         if(check({nils: [translation, language], object: identifier})) {
             for(let [new_identifier, new_dictionary] of Object.entries(identifier)) {
                 for(let [new_language, new_translation] of Object.entries(new_dictionary)) {
-                    this.add(new_identifier, new_translation, new_language, override) // NOTE: This recursive call will check for existing entries too.
+                    this.add(new_identifier, new_translation, new_language, override) // recursive call will check for existing entries
                 }
             }
         } else {

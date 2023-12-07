@@ -39,4 +39,4 @@ console.log(dict.INCOMPLETE_TRANSLATIONS)
 
 console.log(dict.put("first translation", dict.PREFERRED_LANGUAGE))
 
-console.log(dict.patch("This $0001.1 a test!", "is not"))
+console.log(dict.patch("This $0003 a test!", "is not"))
