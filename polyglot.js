@@ -177,4 +177,4 @@ export const Polyglot = class {
     }
 }
 
-export default new Polyglot()
+export default new Polyglot() // default shared namespace
