@@ -158,7 +158,7 @@ export const Polyglot = class {
         */
     }
 
-    put(identifier, language, ...substitutions) {
+    print(identifier, language, ...substitutions) {
         try {
             assert(this.has(identifier, language), "Translation not found!")
             return this.patch(this.#dictionary[identifier][language], ...substitutions)

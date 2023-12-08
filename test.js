@@ -22,7 +22,7 @@ try {
         "has",
         "add",
         "patch",
-        "put",
+        "print",
     ]
     const unknown = properties.filter(name => !known.includes(name))
     assert(unknown.length < 1, `Class has undocumented properties ${JSON.stringify(unknown)}!`)

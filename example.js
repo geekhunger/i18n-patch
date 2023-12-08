@@ -43,4 +43,4 @@ console.log(dict.INCOMPLETE_TRANSLATIONS)
 console.log(dict.patch("This $01/$2 a test!", "is", undefined, "is not", "???"))
 
 dict.add("Missing Translation Error", "Traducción '$1' por '$2' ¡faltan!", "es")
-console.log(dict.put("first translation", /* dict.PREFERRED_LANGUAGE */ "es"))
+console.log(dict.print("first translation", /* dict.PREFERRED_LANGUAGE */ "es"))
