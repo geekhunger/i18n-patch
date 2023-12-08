@@ -176,6 +176,7 @@ export const Polyglot = class {
     }
 
     constructor() {
+        assert(this instanceof Polyglot, "Failed sub-classing a class instance!")
         this.add({
             ["Missing Translation Error"]: {
                 en: "Translation '$1' for '$2' missing!",
@@ -184,6 +185,7 @@ export const Polyglot = class {
             }
         })
         this.PREFERRED_LANGUAGE = "en"
+        return this
     }
 }
 
