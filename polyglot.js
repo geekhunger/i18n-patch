@@ -154,21 +154,20 @@ export const Polyglot = class {
     }
 
     put(identifier, language, ...substitutions) {
-        assert(
-            check({object: this.#dictionary}),
-            "Missing dictionary object!"
-        )
-        assert(
-            check({language_alpha2: language}),
-            `Invalid language code '${language}'!`
-        )
-        const translation = type({translation_id: identifier}) && this.#dictionary.hasOwnProperty(identifier)
-            ? this.#dictionary[identifier]
-            : this.#dictionary["Missing Translation Error"]
-        const text = translation.hasOwnProperty(language) && type({string: translation[language]})
-            ? translation[language]
-            : this.patch(translation[this.PREFERRED_LANGUAGE], language) // will be plain-text without placeholders after this compilation, therefor substitutions in return statement will have no effect
-        return this.patch(text, ...substitutions)
+        try {
+            assert(this.has(identifier, language), "Translation not found!")
+            return this.patch(this.#dictionary[identifier][language], ...substitutions)
+        } catch(_) {
+            identifier = "Missing Translation Error"
+            if(this.has(identifier, language)) {
+                return this.patch(this.#dictionary[identifier][language], language, identifier)
+            }
+            assert(
+                this.has(identifier, this.PREFERRED_LANGUAGE),
+                `Missing translations for '${this.PREFERRED_LANGUAGE}' on existing entries ${JSON.stringify(this.#findIncompleteTranslations([language]))}!`
+            )
+            return this.patch(this.#dictionary[identifier][this.PREFERRED_LANGUAGE], language, identifier)
+        }
     }
 
     constructor() {
