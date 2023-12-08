@@ -34,7 +34,7 @@ dict.add("second translation", "foooooobarBAZ", "en", true)
 
 console.log(dict.DICTIONARY, dict.PREFERRED_LANGUAGE)
 
-dict.PREFERRED_LANGUAGE = "en" // try changing this to "fr"
+dict.PREFERRED_LANGUAGE = "ru" // try changing this to "fr"
 
 console.log(dict.FULLY_SUPPORTED_LANGUAGES, dict.PARTLY_SUPPORTED_LANGUAGES, dict.PREFERRED_LANGUAGE)
 
@@ -42,4 +42,5 @@ console.log(dict.INCOMPLETE_TRANSLATIONS)
 
 console.log(dict.patch("This $01/$2 a test!", "is", undefined, "is not", "???"))
 
+dict.add("Missing Translation Error", "Traducción '$1' por '$2' ¡faltan!", "es")
 console.log(dict.put("first translation", /* dict.PREFERRED_LANGUAGE */ "es"))
