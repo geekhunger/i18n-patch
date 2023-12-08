@@ -9,7 +9,7 @@ import {assert, type as check, add as type, validate} from "type-approve"
 type("language_alpha2", "languages_alpha2", value => /^[a-z]{2,2}$/.test(value))
 type("translation_id", value => /\w{3,}/i.test(value))
 
-export const Polyglot = class {
+export default class Polyglot {
     #dictionary = {}
     #preferred_language = undefined
 
@@ -18,29 +18,7 @@ export const Polyglot = class {
     }
 
     set DICTIONARY(value) {
-        return this.add(value)
-    }
-
-    #findIncompleteTranslations(languages) { // get an object of identifiers with a list of missing languages
-        assert(
-            check({array: languages}) &&
-            languages.every(validate("language_alpha2")),
-            `Malformed list of languages ${JSON.stringify(languages)}!`
-        )
-        return Object.assign(
-            {}, // fallback value
-            ...Object // unpack array of objects
-            .entries(this.#dictionary)
-            .map(([identifier, entries]) => {
-                const translations = Object.keys(entries)
-                const list = languages.filter(lang => !translations.includes(lang))
-                if(list.length > 0) {
-                    return {[identifier]: list}
-                }
-                return null
-            })
-            .filter(Boolean)
-        )
+        return this.#addTranslation(value)
     }
 
     get INCOMPLETE_TRANSLATIONS() { // read-only
@@ -82,7 +60,29 @@ export const Polyglot = class {
         return value
     }
 
-    has(identifier, language) {
+    #findIncompleteTranslations(languages) { // get an object of identifiers with a list of missing languages
+        assert(
+            check({array: languages}) &&
+            languages.every(validate("language_alpha2")),
+            `Malformed list of languages ${JSON.stringify(languages)}!`
+        )
+        return Object.assign(
+            {}, // fallback value
+            ...Object // unpack array of objects
+            .entries(this.#dictionary)
+            .map(([identifier, entries]) => {
+                const translations = Object.keys(entries)
+                const list = languages.filter(lang => !translations.includes(lang))
+                if(list.length > 0) {
+                    return {[identifier]: list}
+                }
+                return null
+            })
+            .filter(Boolean)
+        )
+    }
+
+    #hasTranslation(identifier, language) {
         assert(check({object: this.#dictionary}), "Missing dictionary object!")
         assert(check({language_alpha2: language}), `Invalid language code '${language}'!`)
         assert(check({translation_id: identifier}), `Invalid translation identifier '${identifier}'!`)
@@ -94,24 +94,24 @@ export const Polyglot = class {
         )
     }
 
-    add(identifier, translation, language, override = false) {
+    #addTranslation(identifier, translation, language, override = false) {
         if(check({nils: [translation, language], object: identifier})) {
             for(let [new_identifier, new_dictionary] of Object.entries(identifier)) {
                 for(let [new_language, new_translation] of Object.entries(new_dictionary)) {
-                    this.add(new_identifier, new_translation, new_language, override) // recursive call will check for existing entries
+                    this.#addTranslation(new_identifier, new_translation, new_language, override) // recursive call will check for existing entries
                 }
             }
         } else {
             assert(
                 override === true ||
-                !this.has(identifier, language),
+                !this.#hasTranslation(identifier, language),
                 `Conflicting translation with identifier '${identifier}' and language '${language}'!`
             )
             assert(
                 check({string: translation}),
                 `Malformed translation value ${JSON.stringify(translation)}!`
             )
-            if(this.has(identifier, language) && !this.FULLY_SUPPORTED_LANGUAGES.includes(language)) { // reuse assert checks of has()
+            if(this.#hasTranslation(identifier, language) && !this.FULLY_SUPPORTED_LANGUAGES.includes(language)) { // reuse assert checks of has()
                 assert(Object.values(this.#dictionary).every(translations => Object.keys(translations).includes(language)), [
                     "Explicit override of",
                     JSON.stringify({[identifier]: {[language]: this.#dictionary[identifier][language]}}),
@@ -129,20 +129,20 @@ export const Polyglot = class {
         }
     }
 
-    patch(text, ...substitutions) { // substitute text placeholders with actual values
+    #patchText(value, ...substitutions) { // substitute text placeholders with actual values
         assert(
-            check({string: text, array: substitutions}),
-            `Invalid value ${JSON.stringify(text)} for substitution!`
+            check({string: value, array: substitutions}),
+            `Invalid value ${JSON.stringify(value)} for substitution!`
         )
         const searchquery = /(\$(\d+))/g
-        const placeholders = [...new Set(text.match(searchquery))].sort()
+        const placeholders = [...new Set(value.match(searchquery))].sort()
         assert(
             placeholders.length < 1 ||
             placeholders.length <= substitutions.length &&
             placeholders.every(id => parseInt(id.slice(1)) > 0),
             `Missmatch between placeholders ${JSON.stringify(placeholders)} and substitutions ${JSON.stringify(substitutions)}! Numbering of placeholders must start with '$1'. Substitutions quantity must equal (or be larger) than the count of placeholders.`
         )
-        return text.replace(searchquery, (match, placeholder, id) => substitutions[id - 1] || placeholder) // replace values or keep existing placeholder identifiers
+        return value.replace(searchquery, (match, placeholder, id) => substitutions[id - 1] || placeholder) // replace values or keep existing placeholder identifiers
         /*
             An interesting coincidence is that you could nest `patch` requests.
             `const value = patch("Hello, $1 are you feeling $2?", "Alex")` will compile into "Hello, Alex are you feeling $2?"
@@ -158,17 +158,17 @@ export const Polyglot = class {
         */
     }
 
-    print(identifier, language, ...substitutions) {
+    #patchTranslation(identifier, language, ...substitutions) {
         try {
-            assert(this.has(identifier, language), "Translation not found!")
+            assert(this.#hasTranslation(identifier, language), "Translation not found!")
             return this.patch(this.#dictionary[identifier][language], ...substitutions)
         } catch(_) {
             identifier = "Missing Translation Error"
-            if(this.has(identifier, language)) {
+            if(this.#hasTranslation(identifier, language)) {
                 return this.patch(this.#dictionary[identifier][language], language, identifier)
             }
             assert(
-                this.has(identifier, this.PREFERRED_LANGUAGE),
+                this.#hasTranslation(identifier, this.PREFERRED_LANGUAGE),
                 `Missing translations for '${this.PREFERRED_LANGUAGE}' on existing entries ${JSON.stringify(this.#findIncompleteTranslations([language]))}!`
             )
             return this.patch(this.#dictionary[identifier][this.PREFERRED_LANGUAGE], language, identifier)
@@ -177,7 +177,52 @@ export const Polyglot = class {
 
     constructor() {
         assert(this instanceof Polyglot, "Failed sub-classing a class instance!")
-        this.add({
+        /*
+            Importing and working with classes like this one normally looks like this:
+            ```
+                import Polyglot from "i18n-patch"
+                const translation = new Polyglot()
+                translation.add({
+                    "my custom translation": {
+                        en: "hello world",
+                        de: "hallo welt"
+                    }
+                })
+                console.log(translation.DICTIONARY)
+                console.log(translation.PREFERRED_LANGUAGE)
+                console.log(translation.print("my custom translation", translation.PREFERRED_LANGUAGE))
+                console.log(translation.print("my custom translation", "de"))
+            ```
+            Notice how we need to access our class properties with `translation.`
+            Would't it be nice if we could destruct the class properties like so?
+            `const {DICTIONARY, PREFERRED_LANGUAGE, add} = translation`
+            Unfortunately this does only work for getter/setter properties like 'DICTIONARY'!
+            Class methods would loose their `this` binding and throw an error.
+            But we can also not define class methods as getters/setters because they are functions!
+            To solve this, we need some kind of a proxy to bind `this` context.
+            The fallowing is such a proxy.
+            Now you can destruct properties of your class instance and use like so:
+            ```
+                import Polyglot from "i18n-patch"
+                const translation = new Polyglot()
+                const {DICTIONARY, PREFERRED_LANGUAGE, add} = translation
+                add({
+                    "my custom translation": {
+                        en: "hello world",
+                        de: "hallo welt"
+                    }
+                })
+                console.log(DICTIONARY)
+                console.log(PREFERRED_LANGUAGE)
+            ```
+        */
+        Object.defineProperties(this, { // a proxy to allow properties destruction of class(instances)
+            has: {value: (...args) => this.#hasTranslation.apply(this, args)},
+            add: {value: (...args) => this.#addTranslation.apply(this, args)},
+            patch: {value: (...args) => this.#patchText.apply(this, args)},
+            print: {value: (...args) => this.#patchTranslation.apply(this, args)}
+        })
+        this.#addTranslation({
             ["Missing Translation Error"]: {
                 en: "Translation '$1' for '$2' missing!",
                 de: "Übersetzung '$1' für '$2' fehlt!",
@@ -188,5 +233,3 @@ export const Polyglot = class {
         return this
     }
 }
-
-export default new Polyglot() // default shared namespace
