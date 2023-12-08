@@ -178,9 +178,9 @@ export const Polyglot = class {
     constructor() {
         this.add({
             ["Missing Translation Error"]: {
-                en: "{Missing '$1' translation!}",
-                de: "{Übersetzung '$1' fehlt!}",
-                ru: "{Перевод '$1' не найден!}"
+                en: "Translation '$1' for '$2' missing!",
+                de: "Übersetzung '$1' für '$2' fehlt!",
+                ru: "Перевод '$1' для '$2' отсутствует!"
             }
         })
         this.PREFERRED_LANGUAGE = "en"
