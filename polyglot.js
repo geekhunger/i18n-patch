@@ -119,13 +119,12 @@ export const Polyglot = class {
                 check({string: translation}),
                 `Malformed translation value ${JSON.stringify(translation)}!`
             )
-            if(this.has(identifier, language) && !this.FULLY_SUPPORTED_LANGUAGES.includes(language)) { // reuse some assert checks of has()
+            if(this.has(identifier, language) && !this.FULLY_SUPPORTED_LANGUAGES.includes(language)) { // reuse assert checks of has()
                 assert(Object.values(this.#dictionary).every(translations => Object.keys(translations).includes(language)), [
                     "Explicit override of",
                     JSON.stringify({[identifier]: {[language]: this.#dictionary[identifier][language]}}),
                     `reports other missing translations for '${language}' on existing entries`,
-                    JSON.stringify(this.#findIncompleteTranslations([language])),
-                    "!"
+                    JSON.stringify(this.#findIncompleteTranslations([language])) + "!"
                 ].join(" "))
             }
             if(this.#dictionary.hasOwnProperty(identifier)) {
