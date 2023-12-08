@@ -9,14 +9,6 @@ import {assert, type as check, add as type, validate} from "type-approve"
 type("language_alpha2", "languages_alpha2", value => /^[a-z]{2,2}$/.test(value))
 type("translation_id", value => /\w{3,}/i.test(value))
 
-const findMissingNumbers = function(list) {
-    if(!check({array: list}) || list.length < 1) return []
-    const min = Math.min(...list)
-    const max = Math.max(...list)
-    const all = Array.from(Array(max - min + 1), (e, i) => i + min)
-    return all.filter(e => !list.includes(e))
-}
-
 export const Polyglot = class {
     #dictionary = {}
     #preferred_language = undefined
