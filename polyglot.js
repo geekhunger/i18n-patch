@@ -96,6 +96,7 @@ export const Polyglot = class {
         assert(check({translation_id: identifier}), `Invalid translation identifier '${identifier}'!`)
         return (
             this.#dictionary.hasOwnProperty(identifier) &&
+            check({object: this.#dictionary[identifier]}) &&
             this.#dictionary[identifier].hasOwnProperty(language) &&
             check({string: this.#dictionary[identifier][language]})
         )
@@ -127,7 +128,9 @@ export const Polyglot = class {
                     "!"
                 ].join(" "))
             }
-            if(!this.#dictionary.hasOwnProperty(identifier)) {
+            if(this.#dictionary.hasOwnProperty(identifier)) {
+                assert(check({object: this.#dictionary[identifier]}), `Invalid translations object '${identifier}'!`)
+            } else {
                 this.#dictionary[identifier] = {}
             }
             this.#dictionary[identifier][language] = translation // save new entry
