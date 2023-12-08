@@ -141,15 +141,20 @@ export const Polyglot = class {
             placeholders.length <= substitutions.length &&
             placeholders.every(id => parseInt(id.slice(1)) > 0),
             `Missmatch between placeholders ${JSON.stringify(placeholders)} and substitutions ${JSON.stringify(substitutions)}! Numbering of placeholders must start with '$1'. Substitutions quantity must equal (or be larger) than the count of placeholders.`
-            /*
-                If you want to patch(text) multiple times
-            */
         )
         return text.replace(searchquery, (match, placeholder, id) => substitutions[id - 1] || placeholder) // replace values or keep existing placeholder identifiers
         /*
-            For example, `patch("Welcome back, $1. There are $2 messages for you, $1.", "Eric", 2)`
-            compiles into "Welcome back, Eric. There are 2 messages for you, Eric."
-            See how `$1` got replaces multiple times with the first substitution argument? - Cool, eh?!
+            An interesting coincidence is that you could nest `patch` requests.
+            `const value = patch("Hello, $1 are you feeling $2?", "Alex")` will compile into "Hello, Alex are you feeling $2?"
+            See how the second placeholder remained untouched?
+            Another `patch(value, undefined, "good")` will finally compile into "Hello, Alex are you feeling good?"
+            As you can tell, you can set some substitutions purposely to `undefined` and therefore skip their replacement
+            in order to proccess the compilation over multiple steps.
+
+            Another fun fact is `patch("Welcome back, $1. There are $2 messages for you, $1.", "Eric", 2)`
+            which will compiles into "Welcome back, Eric. There are 2 messages for you, Eric."
+            See how all occurrences of `$1` got replaced with the same value from the first substitution in the list?
+            Cool, eh?! ;)
         */
     }
 
