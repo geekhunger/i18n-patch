@@ -2,10 +2,12 @@
 	"private": true,
 	"type": "module",
 	"name": "i18n-patch",
-	"version": "4.0.0",
+	"version": "5.0.0",
 	"description": "Manage multilingual messages",
 	"main": "polyglot.js",
-	"scripts": {},
+	"scripts": {
+		"publish": "node test.js && echo 'npm run publish'"
+	},
 	"keywords": [
 		"expressjs",
 		"nodejs",
