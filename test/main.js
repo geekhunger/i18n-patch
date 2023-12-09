@@ -6,8 +6,8 @@ import {exit} from "process"
         console.info("[v] Executed unit tests.")
     
         const units = [
-            await import("./translate.js"),
             await import("./class.js"),
+            await import("./dictionary.js"),
         ]
         .map(({default: test}) => test)
 

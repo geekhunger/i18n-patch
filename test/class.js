@@ -23,7 +23,7 @@ try {
         "translate",
     ]
     const unknown = properties.filter(name => !known.includes(name))
-    assert(unknown.length < 0, `Class has undocumented properties ${JSON.stringify(unknown)}!`)
+    assert(unknown.length < 1, `Class has undocumented properties ${JSON.stringify(unknown)}!`)
     console.log("[v] Checked required class methods and properties.")
 } catch({message}) {
     failure = message
