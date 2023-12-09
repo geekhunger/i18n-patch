@@ -6,7 +6,7 @@
 	"description": "Manage multilingual messages",
 	"main": "polyglot.js",
 	"scripts": {
-		"publish": "node test.js && echo 'npm run publish'"
+		"publish": "node test/main.js && echo 'npm run publish'"
 	},
 	"keywords": [
 		"expressjs",
