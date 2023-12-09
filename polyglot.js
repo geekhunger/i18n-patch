@@ -175,8 +175,9 @@ export default class Polyglot {
         }
     }
 
-    constructor() {
-        assert(this instanceof Polyglot, "Failed sub-classing a class instance!")
+    #proxyPrivateProperty(private_name, public_name) { // a proxy to allow properties destruction of class(instances)
+        const private_value = eval(`this.#${private_name.replace(/^#?/, "")}`) // a hack, because private properties can't be invoked dynamically by name, see https://stackoverflow.com/a/61197752/4383587
+        Object.defineProperty(this, [public_name], {value: (...args) => private_value.apply(this, args)})
         /*
             Importing and working with classes like this one normally looks like this:
             ```
@@ -216,12 +217,14 @@ export default class Polyglot {
                 console.log(PREFERRED_LANGUAGE)
             ```
         */
-        Object.defineProperties(this, { // a proxy to allow properties destruction of class(instances)
-            has: {value: (...args) => this.#hasTranslation.apply(this, args)},
-            add: {value: (...args) => this.#addTranslation.apply(this, args)},
-            patch: {value: (...args) => this.#patchText.apply(this, args)},
-            print: {value: (...args) => this.#patchTranslation.apply(this, args)}
-        })
+    }
+
+    constructor() {
+        assert(this instanceof Polyglot, "Failed sub-classing a class instance!")
+        this.#proxyPrivateProperty("hasTranslation", "has")
+        this.#proxyPrivateProperty("addTranslation", "add")
+        this.#proxyPrivateProperty("patchText", "patch")
+        this.#proxyPrivateProperty("patchTranslation", "print")
         this.#addTranslation({
             ["Missing Translation Error"]: {
                 en: "Translation '$1' for '$2' missing!",
