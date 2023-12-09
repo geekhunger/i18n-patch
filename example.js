@@ -1,7 +1,7 @@
 import Polyglot from "./polyglot.js"
 
 const dict = new Polyglot()
-const {DICTIONARY, PREFERRED_LANGUAGE, has, add} = dict
+const {DICTIONARY, PREFERRED_LANGUAGE, has, add, translate} = dict
 
 console.log("Public properties:", [
     ...Object.getOwnPropertyNames(Object.getPrototypeOf(dict)),
@@ -59,4 +59,4 @@ console.log(dict.patch("This $01/$2 a test!", "is", undefined, "is not", "???"))
 
 dict.add("Missing Translation Error", "Traducción '$1' por '$2' ¡faltan!", "es")
 
-console.log(dict.print("first translation", "es")) // dict.PREFERRED_LANGUAGE
+console.log(translate("first translation", "es")) // dict.PREFERRED_LANGUAGE

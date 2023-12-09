@@ -224,7 +224,7 @@ export default class Polyglot {
         this.#proxyPrivateProperty("hasTranslation", "has")
         this.#proxyPrivateProperty("addTranslation", "add")
         this.#proxyPrivateProperty("patchText", "patch")
-        this.#proxyPrivateProperty("patchTranslation", "print")
+        this.#proxyPrivateProperty("patchTranslation", "translate")
         this.#addTranslation({
             ["Missing Translation Error"]: {
                 en: "Translation '$1' for '$2' missing!",
