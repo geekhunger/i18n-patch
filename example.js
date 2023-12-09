@@ -59,4 +59,4 @@ console.log(dict.patch("This $01/$2 a test!", "is", undefined, "is not", "???"))
 
 dict.add("Missing Translation Error", "Traducción '$1' por '$2' ¡faltan!", "es")
 
-console.log(translate("first translation", "es")) // dict.PREFERRED_LANGUAGE
+console.log(translate("first translation", "es")) // try without second argument (language)

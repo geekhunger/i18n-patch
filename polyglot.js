@@ -94,7 +94,7 @@ export default class Polyglot {
         )
     }
 
-    #addTranslation(identifier, translation, language, override = false) {
+    #addTranslation(identifier, translation, language, /*optional*/ override = false) {
         if(check({nils: [translation, language], object: identifier})) {
             for(let [new_identifier, new_dictionary] of Object.entries(identifier)) {
                 for(let [new_language, new_translation] of Object.entries(new_dictionary)) {
@@ -129,7 +129,7 @@ export default class Polyglot {
         }
     }
 
-    #patchText(value, ...substitutions) { // substitute text placeholders with actual values
+    #patchText(value, /*optional*/ ...substitutions) { // substitute text placeholders with actual values
         assert(
             check({string: value, array: substitutions}),
             `Invalid value ${JSON.stringify(value)} for substitution!`
@@ -158,7 +158,7 @@ export default class Polyglot {
         */
     }
 
-    #patchTranslation(identifier, language, ...substitutions) {
+    #patchTranslation(identifier, /*optional*/ language = this.PREFERRED_LANGUAGE, /*optional*/ ...substitutions) {
         try {
             assert(this.#hasTranslation(identifier, language), "Translation not found!")
             return this.patch(this.#dictionary[identifier][language], ...substitutions)
