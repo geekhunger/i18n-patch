@@ -1,15 +1,23 @@
 import {type, assert} from "type-approve"
 import {exit} from "process"
 
+const queue = [
+    "class",
+    "dictionary"
+]
+
 !async function() {
     try {
         console.info("[v] Executed unit tests.")
     
-        const units = [
-            await import("./class.js"),
-            await import("./dictionary.js"),
-        ]
-        .map(({default: test}) => test)
+        let units = []
+        for(let unit of queue) {
+            const filename = unit
+                .replace(/^(\.\/)?/, "./")
+                .replace(/(\.js)?$/, ".js")
+            const value = await import(filename)
+            units.push(value.default)
+        }
 
         const separator = "\n\t - "
         const failures = separator + units

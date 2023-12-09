@@ -5,8 +5,7 @@ let dict = new Polyglot()
 let failure = false
 
 try {
-    // TODO
-    assert(false, "LOL")
+    // TODO insert a unit test
 } catch({message}) {
     failure = message
 }
