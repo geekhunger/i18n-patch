@@ -7,7 +7,7 @@
 import {assert, type as check, add as type, validate} from "type-approve"
 
 type("language_alpha2", "languages_alpha2", value => /^[a-z]{2,2}$/.test(value))
-type("translation_id", value => /\w{3,}/i.test(value))
+type("translation_id", value => /^[a-z-0-9\u0020\u00A0\(\)\[\]\?!\-\.,_:]{3,}$/ui.test(value.trim()))
 
 export default class Polyglot {
     #dictionary = {}
