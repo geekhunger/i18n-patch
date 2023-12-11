@@ -6,8 +6,7 @@
 	"description": "Manage multilingual messages",
 	"main": "polyglot.js",
 	"scripts": {
-		"test": "ava 'test.js'",
-		"coverage": "c8 ava --reports-dir='./node_modules/.cache/c8'",
+		"test": "c8 --reports-dir='./node_modules/.cache/c8' ava 'test.js'",
 		"publish": "npm run test && echo 'npm run publish'"
 	},
 	"keywords": [
