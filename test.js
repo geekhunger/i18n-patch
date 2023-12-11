@@ -75,7 +75,27 @@ test.serial("Class properties have sane types", t => {
 })
 
 
-test.serial.todo("Class properties have sane default values")
+test.serial("Class properties have sane default values", t => {
+    t.true(
+        dict.AVAILABLE_LANGUAGES?.length >= 1,
+        "There must be translations, hence there must be languages!"
+    )
+    t.true(
+        dict.PARTLY_SUPPORTED_LANGUAGES?.length === 0 &&
+        type({object: dict.INCOMPLETE_TRANSLATIONS}) &&
+        Object.keys(dict.INCOMPLETE_TRANSLATIONS).length === 0 &&
+        dict.FULLY_SUPPORTED_LANGUAGES?.length === dict.AVAILABLE_LANGUAGES?.length,
+        "There must be no incomplete translations!"
+    )
+    t.true(
+        dict.FULLY_SUPPORTED_LANGUAGES.includes(dict.PREFERRED_LANGUAGE),
+        "All translations must support the primary language!"
+    )
+    t.true(
+        dict.has("Missing Translation Error", dict.PREFERRED_LANGUAGE),
+        "Mandatory dictionary entries must exist!"
+    )
+})
 
 
 test("Can destruct and execute class methods ('this' bindings, unit tests)", t => {
