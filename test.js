@@ -43,20 +43,20 @@ const REQUIRED_PROPERTIES = {
 }
 
 
-test.serial("Validate test setup of the unit", t => {
+test.serial("Validate setup of unit test", t => {
     const unassigned = REQUIRED_PROPERTIES.destructables.filter(name => !REQUIRED_PROPERTIES.functions.includes(name))
     t.true(unassigned < 1, "Found properties that aren't a subset of 'REQUIRED_PROPERTIES.functions': " + JSON.stringify(unassigned))
 })
 
 
-test.serial("Class contains required properties", t => {
+test.serial("Validate required class properties", t => {
     const whitelist = [...new Set(Object.values(REQUIRED_PROPERTIES).flat())]
     const unknown = CLASS_PROPERTIES.filter(name => !whitelist.includes(name))
     t.is(unknown.length, 0, "Found untested and undocumented properties: " + JSON.stringify(unknown))
 })
 
 
-test.serial("Class properties have sane types", t => {
+test.serial("Validate types of class properties", t => {
     const getPropertyDescriptor = name => Object.getOwnPropertyDescriptor(Object.getPrototypeOf(dict), name)
     const hasGetter = property => type({function: getPropertyDescriptor(property).get})
     const hasSetter = property => type({function: getPropertyDescriptor(property).set})
@@ -75,7 +75,7 @@ test.serial("Class properties have sane types", t => {
 })
 
 
-test.serial("Class properties have sane default values", t => {
+test.serial("Validate default values of class properties", t => {
     t.true(
         dict.AVAILABLE_LANGUAGES?.length >= 1,
         "There must be translations, hence there must be languages!"
@@ -92,13 +92,14 @@ test.serial("Class properties have sane default values", t => {
         "All translations must support the primary language!"
     )
     t.true(
+        type({object: dict.DICTIONARY}) &&
         dict.has("Missing Translation Error", dict.PREFERRED_LANGUAGE),
         "Mandatory dictionary entries must exist!"
     )
 })
 
 
-test("Can destruct and execute class methods ('this' bindings, unit tests)", t => {
+test("Destruct and unit-test class methods (incl. 'this' bindings)", t => {
     const mockup = { // test class properties with the fallowing datasets
         has: [
             has => t.true(
