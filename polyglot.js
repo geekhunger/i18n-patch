@@ -137,10 +137,14 @@ export default class Polyglot {
         const searchquery = /(\$(\d+))/g
         const placeholders = [...new Set(value.match(searchquery))].sort()
         assert(
-            placeholders.length < 1 ||
-            placeholders.length <= substitutions.length &&
+            placeholders.length === 0 ||
+            placeholders.length <= substitutions.length,
+            `Quantity missmatch between placeholders ${JSON.stringify(placeholders)} and substitutions ${JSON.stringify(substitutions)}!`
+        )
+        assert(
+            placeholders.length === 0 ||
             placeholders.every(id => parseInt(id.slice(1)) > 0),
-            `Missmatch between placeholders ${JSON.stringify(placeholders)} and substitutions ${JSON.stringify(substitutions)}! Numbering of placeholders must start with '$1'. Substitutions quantity must equal (or be larger) than the count of placeholders.`
+            "Placeholder numbering must start with $1."
         )
         return value.replace(searchquery, (match, placeholder, id) => substitutions[id - 1] || placeholder) // replace values or keep existing placeholder identifiers
         /*
