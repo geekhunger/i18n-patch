@@ -224,7 +224,9 @@ export default class Polyglot {
     }
 
     constructor() {
-        assert(this instanceof Polyglot, "Failed sub-classing a class instance!")
+        if(!(this instanceof Polyglot)) {
+            return new Polyglot()
+        }
         this.#proxyPrivateProperty("hasTranslation", "has")
         this.#proxyPrivateProperty("addTranslation", "add")
         this.#proxyPrivateProperty("patchText", "patch")
