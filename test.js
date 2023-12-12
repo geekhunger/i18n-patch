@@ -202,6 +202,31 @@ test("Destruct and unit-test class methods (incl. 'this' bindings)", t => {
             ),
         ],
         patch: [
+            patch => t.regex( // should error because of invalid value
+                t.throws(patch.bind(undefined, null))?.message,
+                /invalid value/i,
+                "Missing value with placeholders!"
+            ),
+            patch => t.regex( // should error because of missing substitution
+                t.throws(patch.bind(undefined, "Hello $1"))?.message,
+                /missmatch between placeholders/i,
+                "Missing substitution!"
+            ),
+            patch => t.regex( // should error because placeholder starts with $0 (should start with $1)
+                t.throws(patch.bind(undefined, "Hello $0", "World"))?.message,
+                /must start with \$?1/i,
+                "Placeholder count must start with 1!"
+            ),
+            patch => t.regex( // should error because more placeholders than substitutions
+                t.throws(patch.bind(undefined, "$1 $2", "Hello"))?.message,
+                /missmatch between placeholders/i,
+                "Must have enough substitution to match all placeholders!"
+            ),
+            patch => t.is( // should pass because values for substitution can be explicitly set to undefined or null
+                patch("$1 $2", "Hello", undefined, "World"),
+                "Hello $2",
+                "Should allow to skip placeholders by passing undefined or null!"
+            ),
         ],
         translate: [
         ]
