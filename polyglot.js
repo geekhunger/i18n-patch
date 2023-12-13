@@ -144,7 +144,7 @@ export default class Polyglot {
         assert(
             placeholders.length === 0 ||
             placeholders.every(id => parseInt(id.slice(1)) > 0),
-            "Placeholder numbering must start with $1."
+            "Placeholder numbering must start with $1!"
         )
         return value.replace(searchquery, (match, placeholder, id) => substitutions[id - 1] || placeholder) // replace values or keep existing placeholder identifiers
         /*
