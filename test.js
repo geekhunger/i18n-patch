@@ -248,7 +248,7 @@ test.serial("Validate class properties", t => {
         "There must be no incomplete translations!"
     )
     t.true(
-        dict.FULLY_SUPPORTED_LANGUAGES.includes(dict.PREFERRED_LANGUAGE),
+        dict.FULLY_SUPPORTED_LANGUAGES.includes(dict.PREFERRED_LANGUAGE), // kind of includes the check for `/[a-z]{2,2}/.test(dict.PREFERRED_LANGUAGE)`
         "All translations must support the primary language!"
     )
     t.true(
@@ -256,6 +256,11 @@ test.serial("Validate class properties", t => {
         dict.has("Missing Translation Error", dict.PREFERRED_LANGUAGE),
         "Mandatory dictionary entries must exist!"
     )
+    t.notThrows(() => {
+        let d = new Polyglot()
+        delete d.DICTIONARY["Missing Translation Error"]
+        t.assert(d.PREFERRED_LANGUAGE === undefined)
+    }, undefined, "Preferred language must return 'undefined' when there are no translations!")
 })
 
 
