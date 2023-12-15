@@ -48,8 +48,20 @@ export default class Polyglot {
     }
 
     set PREFERRED_LANGUAGE(value) {
-        assert(check({language_alpha2: value}), `Invalid language code '${value}'!`)
-        assert(check(this.FULLY_SUPPORTED_LANGUAGES.includes(value)), `Missing translations for '${value}' on existing entries ${JSON.stringify(this.#findIncompleteTranslations([value]))}!`)
+        assert(
+            this.AVAILABLE_LANGUAGES.includes(value),
+            `Refused to set preferred language to '${value}' because there are no translations using it!`
+        )
+        if(!check(this.FULLY_SUPPORTED_LANGUAGES.includes(value))) {
+            const missing_translations = this.#findIncompleteTranslations([value])
+            if(Object.keys(missing_translations).length > 0) {
+                console.warn(`Missing translations for '${value}' on existing entries ${JSON.stringify(missing_translations)}!`)
+            }
+        }
+        assert(
+            check({language_alpha2: value}),
+            `Invalid language code '${value}'!`
+        )
         this.#preferred_language = value
         return value
     }
@@ -109,12 +121,17 @@ export default class Polyglot {
                 `Malformed translation value ${JSON.stringify(translation)}!`
             )
             if(this.#hasTranslation(identifier, language) && !this.FULLY_SUPPORTED_LANGUAGES.includes(language)) { // reuse assert checks of has()
-                assert(Object.values(this.#dictionary).every(translations => Object.keys(translations).includes(language)), [
-                    "Explicit override of",
-                    JSON.stringify({[identifier]: {[language]: this.#dictionary[identifier][language]}}),
-                    `reports other missing translations for '${language}' on existing entries`,
-                    JSON.stringify(this.#findIncompleteTranslations([language])) + "!"
-                ].join(" "))
+                const missing_translations = this.#findIncompleteTranslations([language])
+                if(Object.keys(missing_translations).length > 0 &&
+                Object.values(this.#dictionary).every(translations => Object.keys(translations).includes(language)))
+                {
+                    console.warn([
+                        "Explicit override of",
+                        JSON.stringify({[identifier]: {[language]: this.#dictionary[identifier][language]}}),
+                        `reports other missing translations for '${language}' on existing entries`,
+                        JSON.stringify(missing_translations) + "!"
+                    ].join(" "))
+                }
             }
             if(this.#dictionary.hasOwnProperty(identifier)) {
                 assert(check({object: this.#dictionary[identifier]}), `Malformed translations object '${identifier}'!`)
