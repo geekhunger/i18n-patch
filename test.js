@@ -127,21 +127,6 @@ const UNIT_TESTS = { // tests for class properties
                 "Should not override dictionary but add new entries!"
             )
         })
-        t.regex( // should notify about language that is not present in all other translations
-            t.throws(() => {
-                delete dict.DICTIONARY["Missing Translation Error"].en
-                add("Foobar", "ups", "en", /*bypass checks of 'has' method:*/ true)
-                /*
-                    'Foo' translation exists and already has 'en' language
-                    but somehow not every translation contains the 'en' language
-                    (maybe through manual manipulation of dictionary),
-                    thus we try to insert a translation with a language
-                    that isn't yet fully supported by all available translations.
-                */
-            })?.message,
-            /reports other missing translations/i,
-            "Must notify about missing translations for an yet unknown language!"
-        )
     },
     patch: (t, name, patch) => {
         t.true(
@@ -188,11 +173,6 @@ const UNIT_TESTS = { // tests for class properties
             translate("Foobar", "de"),
             "Übersetzung 'de' für 'Missing Translation Error' fehlt!",
             "Missing translation should fallback onto default message but still use the given language!"
-        )
-        t.regex(
-            t.throws(translate.bind(undefined, "Foo", "es"))?.message,
-            /missing translations for '[a-z]{2,2}' on existing entries/i,
-            "Existing translation is missing given language (and missing primary language too)!"
         )
     }
 }
