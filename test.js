@@ -104,37 +104,37 @@ test("Destruct and unit-test class methods (incl. 'this' bindings)", t => {
         has: has => {
             t.true(
                 type({function: has}),
-                "Method must be a function!"
-            ),
+                "Method 'has' must be a function!"
+            )
             t.regex( // translation should be longer
                 t.throws(has.bind(this, "ab", "en"))?.message,
                 /invalid translation identifier/i,
                 "Translation ID must be invalid!"
-            ),
+            )
             t.regex( // translation with illegal characters should be invalid
                 t.throws(has.bind(this, "\n\t ", "en"))?.message,
                 /invalid translation identifier/i,
                 "Translation ID must be invalid!"
-            ),
+            )
             t.notThrows( // translation with whitelisted characters should be valid
                 has.bind(undefined, "123, Foo?-(Bar)_[B:A.Z]!", "en"),
                 "Translation ID must be valid!"
-            ),
+            )
             t.regex( // language code should be longer
                 t.throws(has.bind(this, "abc", "a"))?.message,
                 /invalid language code/i,
                 "Language must be invalid!"
-            ),
+            )
             t.regex( // language code should be shorter
                 t.throws(has.bind(this, "abc", "abc"))?.message,
                 /invalid language code/i,
                 "Language must be invalid!"
-            ),
+            )
             t.regex( // language code should be lowercase
                 t.throws(has.bind(this, "abc", "AA"))?.message,
                 /invalid language code/i,
                 "Language must be invalid!"
-            ),
+            )
             t.is( // translation should exists
                 has("Missing Translation Error", dict.PREFERRED_LANGUAGE),
                 true,
@@ -149,7 +149,7 @@ test("Destruct and unit-test class methods (incl. 'this' bindings)", t => {
         add: add => {
             t.true(
                 type({function: add}),
-                "Method must be a function!"
+                "Method 'add' must be a function!"
             )
             t.regex( // should fail creating translation with malformed content
                 t.throws(add.bind(undefined, "Foobar", {foo: "bar"}, "en"))?.message,
@@ -165,7 +165,7 @@ test("Destruct and unit-test class methods (incl. 'this' bindings)", t => {
                 t.throws(add.bind(undefined, "Foobar", "Hey", "en"))?.message,
                 /conflicting translation/i,
                 "Must conflict with existing translation!"
-            ),
+            )
             t.is( // should be able to force-override existing translation
                 add("Foobar", "Welcome", "en", true),
                 "Welcome",
@@ -202,6 +202,10 @@ test("Destruct and unit-test class methods (incl. 'this' bindings)", t => {
             )
         },
         patch: patch => {
+            t.true(
+                type({function: patch}),
+                "Method 'patch' must be a function!"
+            )
             t.regex( // should error because of invalid value
                 t.throws(patch.bind(undefined, null))?.message,
                 /invalid value/i,
@@ -229,6 +233,10 @@ test("Destruct and unit-test class methods (incl. 'this' bindings)", t => {
             )
         },
         translate: translate => {
+            t.true(
+                type({function: translate}),
+                "Method 'translate' must be a function!"
+            )
             t.is(
                 translate("Foo", "de", "bar"),
                 "foobar",
