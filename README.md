@@ -1,8 +1,22 @@
 # Readme
 
-## Intro
-
 This package helps working with multilingual text snippets and translation mappings.
+
+## Class properties
+
+- **`DICTIONARY`** an object containing all of the translations
+- **`INCOMPLETE_TRANSLATIONS`** list of missing translations (keys are translation identifiers and values are lists of missing 'spoken' languages for that particular translation)
+- **`AVAILABLE_LANGUAGES`** languages that were found from the available translations of the `DICTIONARY` (this list is the *super*set of `PARTLY_SUPPORTED_LANGUAGES` and `FULLY_SUPPORTED_LANGUAGES`)
+- **`PARTLY_SUPPORTED_LANGUAGES`** if all translations don't have the same 'spoken' langugages then this list will contain the ones that aren't common across all of the available translations (the list is a *sub*set of `AVAILABLE_LANGUAGES`)
+- **`FULLY_SUPPORTED_LANGUAGES`** this list contains languages that are 'spoken' by all of the available translations (the list is a *sub*set of `AVAILABLE_LANGUAGES`)
+- **`PREFERRED_LANGUAGE`** default is `'en'`
+
+## Class methods
+
+- **`patch(text, ...substitutions)`** takes any text and substitutes its placesholders with actual values
+- **`translate(identifier, language, ...substitutions)`** takes an identifier to an existing translation, fetches its text and then runs `patch` over it to replace placeholders with values
+- **`has(identifier, language)`** checks if a given translation exists for a particular language
+- **`add(identifier, text, language, override = false)`** adds a new translation with for given language (if a translation exists, you may use `override = true` to forcefully override it)
 
 ## Example
 
@@ -34,18 +48,4 @@ library.PREFERRED_LANGUAGE = "es" // now reset the primary language (success)
 console.log(translate("Hello World Page Message", undefined, "Eric")) // setting language to 'undefined' is exactly the same as using PREFERRED_LANGUAGE (as shown in example above), this time the translated test is spanish, because we changed the primary language
 ```
 
-## Class properties
-
-- **`DICTIONARY`** an object containing all of the translations
-- **`INCOMPLETE_TRANSLATIONS`** list of missing translations (keys are translation identifiers and values are lists of missing 'spoken' languages for that particular translation)
-- **`AVAILABLE_LANGUAGES`** languages that were found from the available translations of the `DICTIONARY` (this list is the *super*set of `PARTLY_SUPPORTED_LANGUAGES` and `FULLY_SUPPORTED_LANGUAGES`)
-- **`PARTLY_SUPPORTED_LANGUAGES`** if all translations don't have the same 'spoken' langugages then this list will contain the ones that aren't common across all of the available translations (the list is a *sub*set of `AVAILABLE_LANGUAGES`)
-- **`FULLY_SUPPORTED_LANGUAGES`** this list contains languages that are 'spoken' by all of the available translations (the list is a *sub*set of `AVAILABLE_LANGUAGES`)
-- **`PREFERRED_LANGUAGE`** default is `'en'`
-
-## Class methods
-
-- **`patch(text, ...substitutions)`** takes any text and substitutes its placesholders with actual values
-- **`translate(identifier, language, ...substitutions)`** takes an identifier to an existing translation, fetches its text and then runs `patch` over it to replace placeholders with values
-- **`has(identifier, language)`** checks if a given translation exists for a particular language
-- **`add(identifier, text, language, override = false)`** adds a new translation with for given language (if a translation exists, you may use `override = true` to forcefully override it)
+[More examples can be found here.](./example)

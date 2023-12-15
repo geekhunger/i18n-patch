@@ -2,7 +2,7 @@
 	"private": false,
 	"type": "module",
 	"name": "i18n-dict",
-	"version": "7.0.4",
+	"version": "7.0.5",
 	"description": "Manage multilingual messages",
 	"main": "polyglot.js",
 	"scripts": {
