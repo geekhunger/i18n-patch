@@ -183,13 +183,13 @@ export default class Polyglot {
         } catch(_) {
             identifier = "Missing Translation Error"
             if(this.#hasTranslation(identifier, language)) {
-                return this.patch(this.#dictionary[identifier][language], language, identifier)
+                return this.patch(this.#dictionary[identifier][language], identifier, language)
             }
             assert(
                 this.#hasTranslation(identifier, this.PREFERRED_LANGUAGE),
                 `Missing translations for '${this.PREFERRED_LANGUAGE}' on existing entries ${JSON.stringify(this.#findIncompleteTranslations([language]))}!`
             )
-            return this.patch(this.#dictionary[identifier][this.PREFERRED_LANGUAGE], language, identifier)
+            return this.patch(this.#dictionary[identifier][this.PREFERRED_LANGUAGE], identifier, language)
         }
     }
 
@@ -244,9 +244,9 @@ export default class Polyglot {
         this.#proxyPrivateProperty("patchTranslation", "translate")
         this.#addTranslation({
             ["Missing Translation Error"]: {
-                en: "Translation '$1' for '$2' missing!",
-                de: "Übersetzung '$1' für '$2' fehlt!",
-                ru: "Перевод '$1' для '$2' отсутствует!"
+                en: "Lexicon entry '$1' is missing a translation for '$2'!",
+                de: "Im Lexikoneintrag '$1' fehlt die Übersetzung '$2'!",
+                ru: "В записях лексикона '$1' отсутствует перевод '$2'!"
             }
         })
         this.PREFERRED_LANGUAGE = "en"
