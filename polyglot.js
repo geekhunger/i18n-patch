@@ -96,11 +96,14 @@ export default class Polyglot {
 
     #addTranslation(identifier, translation, language, /*optional*/ override = false) {
         if(check({nils: [translation, language], object: identifier})) {
+            let values = []
             for(let [new_identifier, new_dictionary] of Object.entries(identifier)) {
                 for(let [new_language, new_translation] of Object.entries(new_dictionary)) {
                     this.#addTranslation(new_identifier, new_translation, new_language, override) // recursive call will check for existing entries
+                    values.push(new_translation)
                 }
             }
+            return values
         } else {
             assert(
                 override === true ||
