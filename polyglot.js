@@ -117,7 +117,7 @@ export default class Polyglot {
                 ].join(" "))
             }
             if(this.#dictionary.hasOwnProperty(identifier)) {
-                assert(check({object: this.#dictionary[identifier]}), `Invalid translation object '${identifier}'!`)
+                assert(check({object: this.#dictionary[identifier]}), `Malformed translations object '${identifier}'!`)
             } else {
                 this.#dictionary[identifier] = {}
             }
