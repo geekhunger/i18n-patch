@@ -1,13 +1,13 @@
 {
-	"private": true,
+	"private": false,
 	"type": "module",
 	"name": "i18n-patch",
-	"version": "7.0.0",
+	"version": "7.0.1",
 	"description": "Manage multilingual messages",
 	"main": "polyglot.js",
 	"scripts": {
 		"test": "c8 --reports-dir='./node_modules/.cache/c8' ava 'test.js'",
-		"publish": "npm run test && echo 'npm run publish'"
+		"publish": "npm run test && npm publish"
 	},
 	"keywords": [
 		"expressjs",
