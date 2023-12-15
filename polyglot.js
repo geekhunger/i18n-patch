@@ -18,7 +18,7 @@ export default class Polyglot {
     }
 
     set DICTIONARY(value) { // just a fancy gimmick `DICTIONARY = {"translation id": {"en": "text value"}}` is the same as `add({...})`
-        return this.#addTranslation(value)
+        return this.#addTranslation(value, null, null, false)
     }
 
     get INCOMPLETE_TRANSLATIONS() { // read-only
