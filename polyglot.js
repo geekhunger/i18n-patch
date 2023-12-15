@@ -1,9 +1,3 @@
-/*
-    Module for working with multilingual text and translation mappings.
-    There are various helpers for filling out text templates with placeholder, build url paths that are fully multilingual or translate text snippets.
-    For more information, inspect the `./translations.json` file.
-*/
-
 import {assert, type as check, add as type, validate} from "type-approve"
 
 type("language_alpha2", "languages_alpha2", value => check({string: value}) && /^[a-z]{2,2}$/.test(value))
