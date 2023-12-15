@@ -183,8 +183,8 @@ export default class Polyglot {
     }
 
     #proxyPrivateProperty(private_name, public_name) { // a proxy to allow properties destruction of class(instances)
-        const private_value = eval(`this.#${private_name.replace(/^#?/, "")}`) // a hack, because private properties can't be invoked dynamically by name, see https://stackoverflow.com/a/61197752/4383587
-        Object.defineProperty(this, [public_name], {value: (...args) => private_value.apply(this, args)})
+        const private_property = eval(`this.#${private_name.replace(/^#?/, "")}`) // a hack, because private properties can't be invoked dynamically by name, see https://stackoverflow.com/a/61197752/4383587
+        Object.defineProperty(this, public_name, {value: (...args) => private_property.apply(this, args)})
         /*
             Importing and working with classes like this one normally looks like this:
             ```
