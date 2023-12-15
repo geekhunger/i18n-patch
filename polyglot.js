@@ -84,8 +84,8 @@ export default class Polyglot {
 
     #hasTranslation(identifier, language) {
         assert(check({object: this.#dictionary}), "Missing dictionary object!")
-        assert(check({language_alpha2: language}), `Invalid language code '${language}'!`)
         assert(check({translation_id: identifier}), `Invalid translation identifier '${identifier}'!`)
+        assert(check({language_alpha2: language}), `Invalid language code '${language}'!`)
         return (
             this.#dictionary.hasOwnProperty(identifier) &&
             check({object: this.#dictionary[identifier]}) &&
