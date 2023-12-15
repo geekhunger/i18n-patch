@@ -101,81 +101,81 @@ test.serial("Validate default values of class properties", t => {
 
 test("Destruct and unit-test class methods (incl. 'this' bindings)", t => {
     const mockup = { // test class properties with the fallowing datasets
-        has: [
-            has => t.true(
+        has: has => {
+            t.true(
                 type({function: has}),
                 "Method must be a function!"
             ),
-            has => t.regex( // translation should be longer
+            t.regex( // translation should be longer
                 t.throws(has.bind(this, "ab", "en"))?.message,
                 /invalid translation identifier/i,
                 "Translation ID must be invalid!"
             ),
-            has => t.regex( // translation with illegal characters should be invalid
+            t.regex( // translation with illegal characters should be invalid
                 t.throws(has.bind(this, "\n\t ", "en"))?.message,
                 /invalid translation identifier/i,
                 "Translation ID must be invalid!"
             ),
-            has => t.notThrows( // translation with whitelisted characters should be valid
+            t.notThrows( // translation with whitelisted characters should be valid
                 has.bind(undefined, "123, Foo?-(Bar)_[B:A.Z]!", "en"),
                 "Translation ID must be valid!"
             ),
-            has => t.regex( // language code should be longer
+            t.regex( // language code should be longer
                 t.throws(has.bind(this, "abc", "a"))?.message,
                 /invalid language code/i,
                 "Language must be invalid!"
             ),
-            has => t.regex( // language code should be shorter
+            t.regex( // language code should be shorter
                 t.throws(has.bind(this, "abc", "abc"))?.message,
                 /invalid language code/i,
                 "Language must be invalid!"
             ),
-            has => t.regex( // language code should be lowercase
+            t.regex( // language code should be lowercase
                 t.throws(has.bind(this, "abc", "AA"))?.message,
                 /invalid language code/i,
                 "Language must be invalid!"
             ),
-            has => t.is( // translation should exists
+            t.is( // translation should exists
                 has("Missing Translation Error", dict.PREFERRED_LANGUAGE),
                 true,
                 "Translation must exist!"
-            ),
-            has => t.is( // translation should not exist
+            )
+            t.is( // translation should not exist
                 has("Foobar", "zz"),
                 false,
                 "Translation must not exist!"
-            ),
-        ],
-        add: [
-            add => t.true(
+            )
+        },
+        add: add => {
+            t.true(
                 type({function: add}),
                 "Method must be a function!"
-            ),
-            add => t.regex( // should fail creating translation with malformed content
+            )
+            t.regex( // should fail creating translation with malformed content
                 t.throws(add.bind(undefined, "Foobar", {foo: "bar"}, "en"))?.message,
                 /malformed translation value/i,
                 "Must fail because of malformed contents!"
-            ),
-            add => t.is( // should be able to create new translation
+            )
+            t.is( // should be able to create new translation
                 add("Foobar", "Hello World", "en"),
                 "Hello World",
                 "Must be able to create translation!"
-            ),
-            add => t.regex( // should not be able to override existing translation
+            )
+            t.regex( // should not be able to override existing translation
                 t.throws(add.bind(undefined, "Foobar", "Hey", "en"))?.message,
                 /conflicting translation/i,
                 "Must conflict with existing translation!"
             ),
-            add => t.is( // should be able to force-override existing translation
+            t.is( // should be able to force-override existing translation
                 add("Foobar", "Welcome", "en", true),
                 "Welcome",
                 "Must be able to override existing translation!"
-            ),
-            add => t.notThrows(() => { // should not override the entire dictionary but work exactly as add()
+            )
+            t.notThrows(() => { // should not override the entire dictionary but work exactly as add()
                 dict.DICTIONARY = {
-                    "Foo": {de: "foo"},
-                    "Bar": {es: "bar"},
-                    "Baz": {fr: "baz"}
+                    "Foo": {de: "foo$1"},
+                    "Bar": {es: "$1bar"},
+                    "Baz": {fr: "$1baz"}
                 }
                 t.assert(
                     dict.has("Foo", "de") &&
@@ -184,8 +184,8 @@ test("Destruct and unit-test class methods (incl. 'this' bindings)", t => {
                     dict.has("Missing Translation Error", dict.PREFERRED_LANGUAGE), // this should still exist
                     "Should not override dictionary but add new entries!"
                 )
-            }),
-            add => t.regex( // should notify about language that is not present in all other translations
+            })
+            t.regex( // should notify about language that is not present in all other translations
                 t.throws(() => {
                     delete dict.DICTIONARY["Missing Translation Error"].en
                     add("Foobar", "ups", "en", /*bypass checks of 'has' method:*/ true)
@@ -199,37 +199,52 @@ test("Destruct and unit-test class methods (incl. 'this' bindings)", t => {
                 })?.message,
                 /reports other missing translations/i,
                 "Must notify about missing translations for an yet unknown language!"
-            ),
-        ],
-        patch: [
-            patch => t.regex( // should error because of invalid value
+            )
+        },
+        patch: patch => {
+            t.regex( // should error because of invalid value
                 t.throws(patch.bind(undefined, null))?.message,
                 /invalid value/i,
                 "Missing value with placeholders!"
-            ),
-            patch => t.regex( // should error because of missing substitution
+            )
+            t.regex( // should error because of missing substitution
                 t.throws(patch.bind(undefined, "Hello $1"))?.message,
                 /missmatch between placeholders/i,
                 "Missing substitution!"
-            ),
-            patch => t.regex( // should error because placeholder starts with $0 (should start with $1)
-                t.throws(patch.bind(undefined, "Hello $0", "World"))?.message,
-                /must start with \$?1/i,
-                "Placeholder count must start with 1!"
-            ),
-            patch => t.regex( // should error because more placeholders than substitutions
+            )
+            t.regex( // should error because more placeholders than substitutions
                 t.throws(patch.bind(undefined, "$1 $2", "Hello"))?.message,
                 /missmatch between placeholders/i,
                 "Must have enough substitution to match all placeholders!"
-            ),
-            patch => t.is( // should pass because values for substitution can be explicitly set to undefined or null
+            )
+            t.regex( // should error because placeholder starts with $0 (should start with $1)
+                t.throws(patch.bind(undefined, "Hello $0", "World"))?.message,
+                /must start with \$?1/i,
+                "Placeholder count must start with 1!"
+            )
+            t.is( // should pass because values for substitution can be explicitly set to undefined or null
                 patch("$1 $2", "Hello", undefined, "World"),
                 "Hello $2",
                 "Should allow to skip placeholders by passing undefined or null!"
-            ),
-        ],
-        translate: [
-        ]
+            )
+        },
+        translate: translate => {
+            t.is(
+                translate("Foo", "de", "bar"),
+                "foobar",
+                "Existing translations should work!"
+            )
+            t.is(
+                translate("Foobar", "de"),
+                "Übersetzung 'de' für 'Missing Translation Error' fehlt!",
+                "Missing translation should fallback onto default message but still use the given language!"
+            )
+            t.regex(
+                t.throws(translate.bind(undefined, "Foo", "es"))?.message,
+                /missing translations for '[a-z]{2,2}' on existing entries/i,
+                "Existing translation is missing given language (and missing primary language too)!"
+            )
+        }
     }
 
     const untested = REQUIRED_PROPERTIES.destructables.filter(name => !Object.keys(mockup).includes(name))
@@ -239,9 +254,8 @@ test("Destruct and unit-test class methods (incl. 'this' bindings)", t => {
     t.is(unknown.length, 0, "Found tests for unknown properties: " + JSON.stringify(untested))
 
     for(let name of REQUIRED_PROPERTIES.destructables) {
-        const delegate = dict[name] // assign to variable, similar to conventional destructing operation like `const {add} = dict`
-        for(let validate of mockup[name]) {
-            validate(delegate)
-        }
+        const delegate = dict[name] // assign to variable, similar to conventional destructing operation `const {add} = dict`
+        const validate = mockup[name] // unit test handler
+        validate(delegate)
     }
 })
