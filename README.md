@@ -26,8 +26,6 @@ console.log(translate("Hello World Page Message", library.PREFERRED_LANGUAGE, "E
 console.log(library.DICTIONARY) // check dictionary contents
 console.log(library.PREFERRED_LANGUAGE) // check primary language
 
-//library.PREFERRED_LANGUAGE = "es" // NOTE: this will fail because there are default translations that lack the "es" translation
-
 add("Missing Translation Error", "¡Traducción '$1' por '$2' faltante!", "es") // add missing spanish translation for existing dictionary entries
 add("Hello World Page Message", "Hola $1, esta es una página de 'Hola Mundo'.", "es") // add spanish translation to our new translation too
 
