@@ -20,6 +20,8 @@ This package helps working with multilingual text snippets and translation mappi
 
 ## Example
 
+[For more examples, inspect the /example folder](./example)
+
 ```js
 import Polyglot from "i18n-dict"
 
@@ -47,5 +49,3 @@ library.PREFERRED_LANGUAGE = "es" // now reset the primary language (success)
 
 console.log(translate("Hello World Page Message", undefined, "Eric")) // setting language to 'undefined' is exactly the same as using PREFERRED_LANGUAGE (as shown in example above), this time the translated test is spanish, because we changed the primary language
 ```
-
-[More examples can be found here.](./example)
