@@ -39,10 +39,10 @@ console.log(translate("Hello World Page Message", undefined, "Eric")) // setting
 ## Class properties
 
 - **`DICTIONARY`** an object containing all of the translations
-- **`INCOMPLETE_TRANSLATIONS`** list of missing translations (keys are translation identifiers and values are lists of languages that need to be added to that particular translation)
-- **`AVAILABLE_LANGUAGES`** languages that were found from the translations of the `DICTIONARY` (this list is the *super*set of `PARTLY_SUPPORTED_LANGUAGES` and `FULLY_SUPPORTED_LANGUAGES`)
-- **`PARTLY_SUPPORTED_LANGUAGES`** (this list is a *sub*set of `AVAILABLE_LANGUAGES`)
-- **`FULLY_SUPPORTED_LANGUAGES`** (this list is a *sub*set of `AVAILABLE_LANGUAGES`)
+- **`INCOMPLETE_TRANSLATIONS`** list of missing translations (keys are translation identifiers and values are lists of missing 'spoken' languages for that particular translation)
+- **`AVAILABLE_LANGUAGES`** languages that were found from the available translations of the `DICTIONARY` (this list is the *super*set of `PARTLY_SUPPORTED_LANGUAGES` and `FULLY_SUPPORTED_LANGUAGES`)
+- **`PARTLY_SUPPORTED_LANGUAGES`** if all translations don't have the same 'spoken' langugages then this list will contain the ones that aren't common across all of the available translations (the list is a *sub*set of `AVAILABLE_LANGUAGES`)
+- **`FULLY_SUPPORTED_LANGUAGES`** this list contains languages that are 'spoken' by all of the available translations (the list is a *sub*set of `AVAILABLE_LANGUAGES`)
 - **`PREFERRED_LANGUAGE`** default is `'en'`
 
 ## Class methods
