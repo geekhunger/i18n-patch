@@ -7,7 +7,7 @@ This package helps working with multilingual text snippets and translation mappi
 ## Example
 
 ```js
-import Polyglot from "i18n-patch"
+import Polyglot from "i18n-dict"
 
 let library = new Polyglot()
 const {has, add, patch, translate} = library // shotcuts for library.has, library.add, library.patch, library.translate
