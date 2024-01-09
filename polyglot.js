@@ -1,7 +1,7 @@
-import {assert, type as check, add as type, validate} from "type-approve"
+import {assert, type, add, validate} from "type-approve"
 
-type("language_alpha2", "languages_alpha2", value => check({string: value}) && /^[a-z]{2,2}$/.test(value))
-type("translation_id", value => check({string: value}) && /^[a-z-0-9\u0020\u00A0\(\)\{\}\[\]<>\?!\-\.,_:]{3,}$/ui.test(value))
+add("language_alpha2", "languages_alpha2", value => type({string: value}) && /^[a-z]{2,2}$/.test(value))
+add("translation_id", value => type({string: value}) && /^[a-z-0-9\u0020\u00A0\(\)\{\}\[\]<>\?!\-\.,_:]{3,}$/ui.test(value))
 
 export default class Polyglot {
     #dictionary = {}
@@ -52,14 +52,14 @@ export default class Polyglot {
             this.AVAILABLE_LANGUAGES.includes(value),
             `Refused to set preferred language to '${value}' because there are no translations using it!`
         )
-        if(!check(this.FULLY_SUPPORTED_LANGUAGES.includes(value))) {
+        if(!type(this.FULLY_SUPPORTED_LANGUAGES.includes(value))) {
             const missing_translations = this.#findIncompleteTranslations([value])
             if(Object.keys(missing_translations).length > 0) {
                 console.warn(`Missing translations for '${value}' on existing entries ${JSON.stringify(missing_translations)}!`)
             }
         }
         assert(
-            check({language_alpha2: value}),
+            type({language_alpha2: value}),
             `Invalid language code '${value}'!`
         )
         this.#preferred_language = value
@@ -68,7 +68,7 @@ export default class Polyglot {
 
     #findIncompleteTranslations(languages) { // get an object of identifiers with a list of missing languages
         assert(
-            check({array: languages}) &&
+            type({array: languages}) &&
             languages.every(validate("language_alpha2")),
             `Malformed list of languages ${JSON.stringify(languages)}!`
         )
@@ -89,19 +89,19 @@ export default class Polyglot {
     }
 
     #hasTranslation(identifier, language) {
-        assert(check({object: this.#dictionary}), "Missing dictionary object!")
-        assert(check({translation_id: identifier}), `Invalid translation identifier '${identifier}'!`)
-        assert(check({language_alpha2: language}), `Invalid language code '${language}'!`)
+        assert(type({object: this.#dictionary}), "Missing dictionary object!")
+        assert(type({translation_id: identifier}), `Invalid translation identifier '${identifier}'!`)
+        assert(type({language_alpha2: language}), `Invalid language code '${language}'!`)
         return (
             this.#dictionary.hasOwnProperty(identifier) &&
-            check({object: this.#dictionary[identifier]}) &&
+            type({object: this.#dictionary[identifier]}) &&
             this.#dictionary[identifier].hasOwnProperty(language) &&
-            check({string: this.#dictionary[identifier][language]})
+            type({string: this.#dictionary[identifier][language]})
         )
     }
 
     #addTranslation(identifier, translation, language, /*optional*/ override = false) {
-        if(check({nils: [translation, language], object: identifier})) {
+        if(type({nils: [translation, language], object: identifier})) {
             let values = []
             for(let [new_identifier, new_dictionary] of Object.entries(identifier)) {
                 for(let [new_language, new_translation] of Object.entries(new_dictionary)) {
@@ -117,7 +117,7 @@ export default class Polyglot {
                 `Conflicting translation with identifier '${identifier}' and language '${language}'!`
             )
             assert(
-                check({string: translation}),
+                type({string: translation}),
                 `Malformed translation value ${JSON.stringify(translation)}!`
             )
             if(this.#hasTranslation(identifier, language) && !this.FULLY_SUPPORTED_LANGUAGES.includes(language)) { // reuse assert checks of has()
@@ -134,7 +134,7 @@ export default class Polyglot {
                 }
             }
             if(this.#dictionary.hasOwnProperty(identifier)) {
-                assert(check({object: this.#dictionary[identifier]}), `Malformed translations object '${identifier}'!`)
+                assert(type({object: this.#dictionary[identifier]}), `Malformed translations object '${identifier}'!`)
             } else {
                 this.#dictionary[identifier] = {}
             }
@@ -145,7 +145,7 @@ export default class Polyglot {
 
     #patchText(value, /*optional*/ ...substitutions) { // substitute text placeholders with actual values
         assert(
-            check({string: value, array: substitutions}),
+            type({string: value, array: substitutions}),
             `Invalid value ${JSON.stringify(value)} for substitution!`
         )
         const searchquery = /(\$(\d+))/g

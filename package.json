@@ -2,12 +2,16 @@
 	"private": false,
 	"type": "module",
 	"name": "i18n-dict",
-	"version": "7.1.0",
+	"version": "7.1.1",
 	"description": "Manage multilingual messages",
 	"main": "polyglot.js",
 	"scripts": {
 		"test": "c8 --reports-dir='./node_modules/.cache/c8' ava 'test.js'"
 	},
+	"repository": {
+        "type": "git",
+        "url": "https://github.com/geekhunger/i18n-patch.git"
+    },
 	"keywords": [
 		"expressjs",
 		"nodejs",
